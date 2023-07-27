@@ -1,0 +1,78 @@
+
+
+
+internal class Personel
+    {
+        public int PersonelID { get; set; }
+        public string Ad { get; set; }
+        public string Soyad { get; set; }     
+    }
+
+//------------------------------------------------------------------
+
+public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void btnKaydet_Click(object sender, EventArgs e)
+        {
+            Personel personel = new Personel();
+            personel.PersonelID = int.Parse(txtID.Text);
+            personel.Ad = txtAd.Text;
+            personel.Soyad = txtSoyad.Text;
+
+            DosyayaYaz("personel.txt", personel);
+        }
+
+        private void DosyayaYaz(string dosyaAdi, Personel personel)
+        {
+            //true => append modunda dosyayı açmak için kullanılır...
+            StreamWriter streamWriter = new StreamWriter(dosyaAdi, true);
+
+            streamWriter.WriteLine($"{personel.PersonelID};{personel.Ad};{personel.Soyad}");
+
+            streamWriter.Close();
+
+
+        }
+
+        private void btnOku_Click(object sender, EventArgs e)
+        {
+            ArrayList data = DosyadanOku("personel.txt");
+            grdPersoneller.DataSource = data;
+            lstPersoneller.DataSource = data;
+        }
+
+        private ArrayList DosyadanOku(string dosyaAdi)
+        {
+            ArrayList _personeller = new ArrayList();
+            StreamReader streamReader = new StreamReader(dosyaAdi);
+
+            do
+            {
+                string strPersonel = streamReader.ReadLine();
+                string[] dizi = strPersonel.Split(';');
+
+                Personel personel = new Personel();
+                personel.PersonelID = int.Parse(dizi[0]);
+                personel.Ad = dizi[1];
+                personel.Soyad = dizi[2];
+
+                _personeller.Add(personel);
+
+            } while (!streamReader.EndOfStream);
+
+
+            streamReader.Close();
+
+            return _personeller;
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+    }
